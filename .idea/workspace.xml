@@ -627,7 +627,7 @@
       <updated>1497553146368</updated>
       <workItem from="1497553148809" duration="6772000" />
       <workItem from="1497708125724" duration="55000" />
-      <workItem from="1497708209774" duration="402000" />
+      <workItem from="1497708209774" duration="442000" />
     </task>
     <task id="LOCAL-00001" summary="Adding git ignore">
       <created>1497708097573</created>
@@ -650,11 +650,18 @@
       <option name="project" value="LOCAL" />
       <updated>1497708379322</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="removing lib files">
+      <created>1497708615803</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1497708615803</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7229000" />
+    <option name="totallyTimeSpent" value="7269000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
