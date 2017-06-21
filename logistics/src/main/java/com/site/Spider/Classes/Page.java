@@ -11,6 +11,7 @@ import java.util.List;
  * Created by chrissheppard on 17/06/2017.
  */
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Entity
 @Data
 @Setter
