@@ -2,8 +2,10 @@ package com.site.Spider;
 
 import com.site.Spider.Classes.Page;
 import com.site.Spider.Classes.Response;
+import com.site.Spider.Classes.Website;
 import com.site.Spider.Operation.Spider;
 import com.site.Spider.Repositories.IPageRepository;
+import com.site.Spider.Repositories.IWebsiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,18 +28,28 @@ public class SpiderController {
     @Autowired
     IPageRepository pageRepository;
 
+    @Autowired
+    IWebsiteRepository websiteRepository;
+
     @RequestMapping(value = "/spider", method = RequestMethod.GET)
-    public ResponseEntity<Response> spider(@RequestParam("website") String website) {
+    public ResponseEntity<Response> spider(@RequestParam("website") long id) {
         Response response = new Response(HttpStatus.OK, "");
 
-        Spider spider = new Spider(website);
-        spider.cycle("/", "/");
+        Website website = websiteRepository.findById(id);
 
-        Map<String, Page> urls = spider.getUrls();
-        response.setData(urls);
+        if(website != null) {
+            Spider spider = new Spider(website);
+            spider.cycle("/");
 
-        pageRepository.save(spider.getUrlsFromMap());
+            Map<String, Page> urls = spider.getUrls();
+            response.setData(urls);
 
+            //pageRepository.save(spider.getUrlsFromMap());
+
+        } else {
+            response.setError("Website does not exist");
+            response.setStatus(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<Response>(
                 response,
                 response.getStatus()

@@ -3,7 +3,6 @@ package com.site.Spider.Classes;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +29,11 @@ public class Page {
 
     private boolean deadUrl = false;
 
+    @NonNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "website_id")
+    private Website website;
+
     public Page(String href, boolean deadUrl) {
         this.callers.add(href);
         this.href = href;
@@ -43,9 +47,11 @@ public class Page {
     @Override
     public String toString() {
         return "Page{" +
-                "callers='" + callers + '\'' +
+                "id=" + id +
+                ", callers=" + callers +
                 ", href='" + href + '\'' +
                 ", deadUrl=" + deadUrl +
+                ", website=" + website +
                 '}';
     }
 }

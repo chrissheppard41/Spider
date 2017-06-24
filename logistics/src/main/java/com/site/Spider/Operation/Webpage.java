@@ -1,6 +1,6 @@
 package com.site.Spider.Operation;
 
-import com.site.Spider.Classes.Page;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,81 +12,79 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
+import java.net.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
+ * @author chrissheppard
  * Created by chrissheppard on 17/06/2017.
  */
 @RequiredArgsConstructor
 public class Webpage {
 
-    private String webpage;
+    private String webpage = "";
 
     @NonNull
     @NotEmpty
     private String url;
 
-    public Webpage getWebpage() throws FileNotFoundException, MalformedURLException, IOException {
+    @Getter private int statusCode;
+
+    //@todo: pages that start with no / find the parent that calls them, remove their end path and add in the page path
+    public Webpage getWebpage() throws IOException {
 
         if(url.isEmpty()) throw new FileNotFoundException("File not Found");
 
         StringBuilder sb = new StringBuilder();
         URL url = new URL(this.url);
-        URLConnection con = url.openConnection();
 
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        con.getInputStream()
-                )
-        );
-        in.lines()
-                .forEach(line -> sb.append(line));
+        if(this.checkWebpage(url)) {
 
-        in.close();
+            URLConnection con = url.openConnection();
 
-        this.webpage = sb.toString();
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            con.getInputStream()
+                    )
+            )) {
+                in.lines()
+                        .forEach(sb::append);
 
+                in.close();
+
+                this.webpage = sb.toString();
+            }
+
+
+        }
         return this;
     }
 
-    public List<Page> getWebpageLinks() throws FileNotFoundException {
-        List<Page> links = new ArrayList<>();
+    private boolean checkWebpage(URL url) throws IOException {
+        HttpURLConnection huc =  (HttpURLConnection)  url.openConnection();
+        huc.setRequestMethod ("GET");
+        huc.connect () ;
+        this.statusCode = huc.getResponseCode();
+        return this.statusCode == 200;
+    }
 
+    public List<String> getWebpageLinks() throws FileNotFoundException {
         if(this.webpage.isEmpty()) throw new FileNotFoundException("Webpage is empty");
 
-        Document doc = Jsoup.parse(this.webpage.toString());
+        Document doc = Jsoup.parse(this.webpage);
 
         Elements a = doc.getElementsByTag("a");
 
-        a.stream()
-                .forEach(link -> {
-                    String href = link.attr("href");
-
-                    if(!this.exclude(href)) {
-
-                        Page l = new Page(href);
-
-                        links.add(l);
-                    }
-                });
-
-        return links;
+        return a.stream()
+                .filter(link -> !this.exclude(link.attr("href")))
+                .map(link -> link.attr("href"))
+                .collect(Collectors.toList());
     }
 
+    //@todo: don't exclude https/http calls to itself, only exclude external website calls
     private boolean exclude(String url) {
-        boolean exc = false;
-
-        if(url.contains("mailto:")
-                || url.contains("http://")
-                || url.contains("https://")) {
-            return true;
-        }
-
-        return exc;
+        return url.contains("mailto:") || url.contains("http://") || url.contains("https://") || url.charAt(0) == '#';
     }
 
 }
