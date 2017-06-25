@@ -6,10 +6,9 @@ import com.site.Spider.Repositories.IWebsiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author chrissheppard
@@ -20,21 +19,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebsiteController {
 
     @Autowired
-    IWebsiteRepository websiteRepository;
+    private IWebsiteRepository websiteRepository;
 
-    //@todo: swap to POST
-    //@todo: validation
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<Response> get(@RequestParam("website") String name) {
+    @RequestMapping(value = "/", method = RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Response> post(@RequestBody @Valid Website website) {
         Response response = new Response(HttpStatus.OK, "");
 
-        Website website = new Website(name);
-
         long id = websiteRepository.save(website).getId();
-
         response.setData(id);
 
-        return new ResponseEntity<Response>(
+        return new ResponseEntity<>(
+                response,
+                response.getStatus()
+        );
+    }
+
+
+    @RequestMapping(value = "/pages/", method = RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseEntity<Response> getPages(@RequestParam("website") long website) {
+        Response response = new Response(HttpStatus.OK, "");
+
+        response.setData(websiteRepository.findAll());
+
+        return new ResponseEntity<>(
                 response,
                 response.getStatus()
         );

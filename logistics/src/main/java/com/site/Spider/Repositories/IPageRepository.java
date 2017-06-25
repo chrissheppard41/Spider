@@ -12,4 +12,6 @@ public interface IPageRepository extends CrudRepository<Page, Long> {
 
     List<Page> findAll();
 
+    List<Page> findByWebsiteId(long id);
+
 }

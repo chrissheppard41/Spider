@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @author chrissheppard
  * Created by chrissheppard on 22/06/2017.
  */
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Entity
-@Data
 @Setter
 @Getter
 public class Website {
@@ -23,7 +23,7 @@ public class Website {
     @NonNull
     private String name;
 
-    @OneToMany(mappedBy = "website", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "website", cascade = CascadeType.ALL)
     private List<Page> webpage = new ArrayList<>();
 
 }

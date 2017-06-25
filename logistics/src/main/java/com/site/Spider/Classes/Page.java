@@ -1,5 +1,6 @@
 package com.site.Spider.Classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Entity
-@Data
 @Setter
 @Getter
 public class Page {
@@ -30,15 +30,10 @@ public class Page {
     private boolean deadUrl = false;
 
     @NonNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "website_id")
+    @JsonIgnore
     private Website website;
-
-    public Page(String href, boolean deadUrl) {
-        this.callers.add(href);
-        this.href = href;
-        this.deadUrl = deadUrl;
-    }
 
     public void addCaller(String caller) {
         this.callers.add(caller);

@@ -4,3 +4,7 @@
 # See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 layout: home
 ---
+
+[my link](http://127.0.0.1:4000/some.html)
+[other link](hello_world.html)
+[other link 2](../hello_world.html)

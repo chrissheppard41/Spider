@@ -32,21 +32,19 @@ public class Spider {
     public void cycle(String url_path) {
         log.info("Looking at webpage :: " + url_path);
 
-        String path = this.rootIndexFile(url_path);
-        Webpage webpage = new Webpage(this.website.getName() + path);
+        String path = url_path;
+        Webpage webpage = new Webpage(path, this.website);
 
         try {
             webpage.getWebpage().getWebpageLinks()
                     .forEach(link -> {
-                        String formatted_link = this.rootIndexFile(link);
-
-                        Page l = this.urls.get(formatted_link);
+                        Page l = this.urls.get(link);
                         if(l == null) {
-                            l = new Page(formatted_link, this.website);
+                            l = new Page(link, this.website);
                             l.addCaller(path);
-                            this.urls.put(formatted_link, l);
+                            this.urls.put(link, l);
 
-                            this.cycle(formatted_link);
+                            this.cycle(link);
 
                         } else {
                             if(!l.getCallers().contains(path)) {
@@ -61,27 +59,6 @@ public class Spider {
             l.setDeadUrl(true);
 
         }
-    }
-
-    private String rootIndexFile(String url) {
-        //index and anchor id's are not required so you can remove them
-        url = this.cleanUrl(url, "/index");
-        url = this.cleanUrl(url, "#");
-        //../ is not needed either and should be removed, bad url pathing
-        if(url.contains("../")) {
-            url = url.replaceFirst("../", "/");
-        }
-
-        return url;
-    }
-
-    private String cleanUrl(String url, String pattern) {
-        if(url.contains(pattern)) {
-            int position = url.lastIndexOf(pattern) + 1;
-            url = url.substring(0, position);
-        }
-
-        return url;
     }
 
     public List<Page> getUrlsFromMap() {

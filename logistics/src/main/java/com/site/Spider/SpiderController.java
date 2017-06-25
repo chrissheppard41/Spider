@@ -26,10 +26,10 @@ import java.util.Map;
 public class SpiderController {
 
     @Autowired
-    IPageRepository pageRepository;
+    private IPageRepository pageRepository;
 
     @Autowired
-    IWebsiteRepository websiteRepository;
+    private IWebsiteRepository websiteRepository;
 
     @RequestMapping(value = "/spider", method = RequestMethod.GET)
     public ResponseEntity<Response> spider(@RequestParam("website") long id) {
@@ -44,7 +44,7 @@ public class SpiderController {
             Map<String, Page> urls = spider.getUrls();
             response.setData(urls);
 
-            //pageRepository.save(spider.getUrlsFromMap());
+            pageRepository.save(spider.getUrlsFromMap());
 
         } else {
             response.setError("Website does not exist");
@@ -57,13 +57,13 @@ public class SpiderController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<Response> get(@RequestParam("website") String website) {
+    public ResponseEntity<Response> get(@RequestParam("website") long website) {
         Response response = new Response(HttpStatus.OK, "");
 
         //@todo: website should be by Id so create a website controller and link
-        response.setData(pageRepository.findAll());
+        response.setData(pageRepository.findByWebsiteId(website));
 
-        return new ResponseEntity<Response>(
+        return new ResponseEntity<>(
                 response,
                 response.getStatus()
         );
